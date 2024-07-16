@@ -1,70 +1,128 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react";
+import { FlatList, Image, View, StyleSheet, StatusBar } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, Badge } from "react-native-paper";
+import { ThemedView } from "@/components/ThemedView";
+import Button from "@/components/ui/button";
+import { chatData } from "@/utils/data";
+import { formatChatTime } from "@/utils/timeFormater";
+import { BellIcon, Edit } from "lucide-react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { storiesUpdates } from "@/utils/output";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const HomeScreen = () => {
+  const { onBackground } = useThemeColor();
 
-export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
+    <SafeAreaView style={styles.safeArea}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <Text variant="headlineMedium" style={styles.headerText}>
+            Purp
+          </Text>
+          <View style={{ flexDirection: "row", gap: 4 }}>
+            <Button
+              badge
+              onPress={() => console.log("Notiication")}
+              icon={true}
+            >
+              {/* <Icon name="pencil" /> */}
+              <BellIcon size={24} strokeWidth={2.4} color={onBackground} />
+            </Button>
+            <Button onPress={() => console.log("New Chat")} icon={true}>
+              {/* <Icon name="pencil" /> */}
+              <Edit size={24} strokeWidth={2.4} color={onBackground} />
+            </Button>
+          </View>
+        </View>
+        <View>
+          <FlatList
+            horizontal={true}
+            snapToStart={true}
+            style={{
+              paddingHorizontal: 16,
+            }}
+            keyExtractor={(item) => item.id}
+            data={storiesUpdates}
+            renderItem={({ item }) => (
+              <Button
+                style={{
+                  marginRight: 12,
+                  padding: 6,
+                  borderRadius: 100,
+                  overflow: "hidden",
+                  backgroundColor: "#333",
+                  borderWidth: 4,
+                  width: 80,
+                  height: 80,
+                }}
+              >
+                {item.media === "image" ? (
+                  <Image
+                    source={item.mediaUrl}
+                    style={{ height: 80, width: 80 }}
+                  />
+                ) : null}
+              </Button>
+            )}
+          />
+        </View>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  safeArea: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  container: {
+    flex: 1,
+    // paddingTop: StatusBar.currentHeight || 0,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    justifyContent: "space-between",
+    borderColor: "#000",
+  },
+  headerText: {
+    fontWeight: "700",
+  },
+  flatList: {
+    flex: 1,
+  },
+  chatItem: {
+    padding: 12,
+    width: "100%",
+  },
+  chatItemContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  chatItemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  chatItemRight: {
+    alignItems: "flex-end",
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+  },
+  messagePreview: {
+    maxWidth: 200,
+  },
+  timestamp: {
+    marginBottom: 3,
   },
 });
+
+export default HomeScreen;
