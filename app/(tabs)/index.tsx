@@ -1,14 +1,13 @@
 import React from "react";
-import { FlatList, Image, View, StyleSheet, StatusBar } from "react-native";
+import { FlatList, Image, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, Badge } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { ThemedView } from "@/components/ThemedView";
 import Button from "@/components/ui/button";
-import { chatData } from "@/utils/data";
-import { formatChatTime } from "@/utils/timeFormater";
 import { BellIcon, Edit } from "lucide-react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { storiesUpdates } from "@/utils/output";
+import { currentUser } from "@/utils/mockAuth";
 
 const HomeScreen = () => {
   const { onBackground } = useThemeColor();
@@ -36,9 +35,16 @@ const HomeScreen = () => {
           </View>
         </View>
         <View>
+          <View>
+            <Image
+              source={currentUser.profilePicture}
+              style={{ width: 80, height: 80 }}
+            />
+          </View>
           <FlatList
             horizontal={true}
             snapToStart={true}
+            showsHorizontalScrollIndicator={false}
             style={{
               paddingHorizontal: 16,
             }}
@@ -52,7 +58,6 @@ const HomeScreen = () => {
                   borderRadius: 100,
                   overflow: "hidden",
                   backgroundColor: "#333",
-                  borderWidth: 4,
                   width: 80,
                   height: 80,
                 }}
@@ -67,6 +72,8 @@ const HomeScreen = () => {
             )}
           />
         </View>
+
+        {/* <PlayVideo /> */}
       </ThemedView>
     </SafeAreaView>
   );
