@@ -1,42 +1,63 @@
+import React, { useEffect, useMemo } from "react";
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+  Provider as PaperProvider,
+  MD3DarkTheme,
+  MD3LightTheme,
+  Text,
+  Button,
+  BottomNavigation,
+} from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { SafeAreaView, View, useColorScheme } from "react-native";
+import { useMaterial3Theme } from "@pchmn/expo-material3-theme";
 import "react-native-reanimated";
-import { Provider } from "react-native-paper";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
+  const colorScheme = useColorScheme();
+  const { theme } = useMaterial3Theme();
+
+  const paperTheme = useMemo(() => {
+    const baseTheme =
+      colorScheme === "dark"
+        ? { ...MD3DarkTheme, colors: theme.dark }
+        : { ...MD3LightTheme, colors: theme.light };
+
+    return colorScheme === "dark"
+      ? { ...baseTheme, colors: { ...baseTheme.colors, background: "#000" } }
+      : baseTheme;
+  }, [colorScheme, theme]);
+
   useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <Provider>
+    <PaperProvider theme={paperTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
-    </Provider>
+    </PaperProvider>
   );
 }
