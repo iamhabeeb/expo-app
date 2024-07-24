@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@trpc/client": "^11.0.0-rc.467",
+    "@trpc/server": "^11.0.0-rc.467",
+    "svix": "^1.25.0",
+    "zod": "^3.23.8"
+  }
+}
