@@ -1,102 +1,112 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import { ThemedView } from "@/components/ThemedView";
+import { currentUser } from "@/utils/mockAuth";
+import { UserType, users } from "@/utils/user";
+import React, { memo } from "react";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text, useTheme } from "react-native-paper";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+type Props = {};
 
-export default function TabTwoScreen() {
+const ExploreScreen = (props: Props) => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ThemedView style={{  flex: 1 }}>
+      <FlatList
+        data={users}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ gap: 20, paddingHorizontal: 16 }}
+        renderItem={({ index, item }) => <ListItem item={item} index={index} />}
+      />
+    </ThemedView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+export default ExploreScreen;
+
+const ListItem = memo(({ item, index }: { item: UserType; index: number }) => {
+  const { dark, colors } = useTheme();
+  const isFollowed = item.followers.includes(currentUser.id);
+
+  const getButtonStyles = ({ pressed }: { pressed: boolean }) => ({
+    borderWidth: 1.5,
+    borderColor: dark
+      ? isFollowed
+        ? "rgba(158, 158, 158, 0.2)"
+        : "rgba(0, 126, 237, 0.2)"
+      : isFollowed
+      ? "rgba(158, 158, 158, 0.2)"
+      : "rgba(0, 126, 237, 0.2)",
+    height: 34,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: dark
+      ? isFollowed
+        ? pressed
+          ? "rgba(158, 158, 158, 0.3)"
+          : "rgba(158, 158, 158, 0.1)"
+        : pressed
+        ? "rgba(0, 126, 237, 0.3)"
+        : "rgba(0, 126, 237, 0.1)"
+      : isFollowed
+      ? pressed
+        ? "rgba(158, 158, 158, 0.3)"
+        : "rgba(158, 158, 158, 0.1)"
+      : pressed
+      ? "rgba(0, 126, 237, 0.3)"
+      : "rgba(0, 126, 237, 0.1)",
+  });
+
+  const getTextStyles = () => ({});
+
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 16,
+      }}
+    >
+      <Image source={item.profilePicture} style={{ width: 52, height: 52 }} />
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <View>
+          <Text variant="titleMedium" style={{ textTransform: "capitalize" }}>
+            {item.username}
+          </Text>
+          <Text style={{ fontWeight: "400", color: "#a0a0a0" }}>
+            {item.fullName}
+          </Text>
+          <Text variant="bodySmall">{item.followers.length} followers</Text>
+        </View>
+        <TouchableOpacity
+          style={{
+            width: 82,
+            height: 34,
+            alignContent: "center",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+            backgroundColor: isFollowed ? "#eee" : "#007eed",
+          }}
+        >
+          <Text style={{ fontWeight: "600", color: isFollowed ? "#999" : "#fff" }}>
+            {isFollowed ? "Followed" : "Follow"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 });
